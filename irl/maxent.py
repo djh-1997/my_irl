@@ -37,16 +37,18 @@ def irl(feature_matrix, n_actions, discount, transition_probability,
     feature_expectations = find_feature_expectations(feature_matrix,
                                                      trajectories)
     # Gradient descent on alpha.
+    R = [] # 记录r的迭代数据
     for i in range(epochs):
         # print("i: {}".format(i))
         r = feature_matrix.dot(alpha)
+        R.append(r)
         expected_svf = find_expected_svf(n_states, r, n_actions, discount,
                                          transition_probability, trajectories)
         grad = feature_expectations - feature_matrix.T.dot(expected_svf)
 
         alpha += learning_rate * grad
 
-    return feature_matrix.dot(alpha).reshape((n_states,))
+    return feature_matrix.dot(alpha).reshape((n_states,)), R
 
 def find_svf(n_states, trajectories):  #  获取状态访问频率
     """
